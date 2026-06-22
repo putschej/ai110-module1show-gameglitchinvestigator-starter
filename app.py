@@ -1,5 +1,6 @@
 import random
 import streamlit as st
+from logic_utils import check_guess, reset_progress
 
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
@@ -27,24 +28,6 @@ def parse_guess(raw: str):
         return False, None, "That is not a number."
 
     return True, value, None
-
-
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
@@ -132,8 +115,14 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
+    # FIX: COLLAB: paired with Claude in agent mode to find why New Game didn't
+    # fully reset; it traced the missing fields and we added reset_progress().
+    # FIXED BUG 2: clear score, status, and history too (via reset_progress)
+    # so no old game state carries over and a finished game (won/lost) can be
+    # restarted instead of being stuck on the "game over" screen.
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
+    st.session_state.update(reset_progress())
     st.success("New game started.")
     st.rerun()
 
