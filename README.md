@@ -92,9 +92,27 @@ I left it on Normal difficulty, and the secret number was 63.
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+$ python -m pytest tests/ -v
+============================= test session starts =============================
+platform win32 -- Python 3.12.6, pytest-9.1.1, pluggy-1.6.0
+collected 14 items
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [  7%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 14%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 21%]
+tests/test_game_logic.py::test_too_high_message_says_go_lower PASSED     [ 28%]
+tests/test_game_logic.py::test_too_low_message_says_go_higher PASSED     [ 35%]
+tests/test_game_logic.py::test_reset_progress_clears_carryover PASSED    [ 42%]
+tests/test_game_logic.py::test_reset_progress_status_allows_restart PASSED [ 50%]
+tests/test_game_logic.py::test_reset_progress_history_is_fresh_list PASSED [ 57%]
+tests/test_game_logic.py::test_negative_number_is_parsed PASSED          [ 64%]
+tests/test_game_logic.py::test_decimal_is_truncated_to_int PASSED        [ 71%]
+tests/test_game_logic.py::test_extremely_large_number_is_parsed PASSED   [ 78%]
+tests/test_game_logic.py::test_large_guess_reads_as_too_high PASSED      [ 85%]
+tests/test_game_logic.py::test_negative_guess_reads_as_too_low PASSED    [ 92%]
+tests/test_game_logic.py::test_non_numeric_input_is_rejected_gracefully PASSED [100%]
+
+============================= 14 passed in 0.04s =============================
 ```
 
 ## 🚀 Stretch Features

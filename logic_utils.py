@@ -9,7 +9,23 @@ def parse_guess(raw: str):
 
     Returns: (ok: bool, guess_int: int | None, error_message: str | None)
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    # FIX: refactored out of app.py so the edge-case inputs (Challenge 1) can be
+    # unit-tested directly. Behavior is unchanged from the original.
+    if raw is None:
+        return False, None, "Enter a guess."
+
+    if raw == "":
+        return False, None, "Enter a guess."
+
+    try:
+        if "." in raw:
+            value = int(float(raw))
+        else:
+            value = int(raw)
+    except Exception:
+        return False, None, "That is not a number."
+
+    return True, value, None
 
 
 def check_guess(guess, secret):
@@ -18,7 +34,7 @@ def check_guess(guess, secret):
 
     outcome examples: "Win", "Too High", "Too Low"
     """
-    # FIX: COLLAB: refactored this function out of app.py into logic_utils.py
+    # FIX: refactored this function out of app.py into logic_utils.py
     # using Claude in agent mode, which also caught and fixed the backwards hint.
     if guess == secret:
         return "Win", "🎉 Correct!"
@@ -48,7 +64,7 @@ def reset_progress():
     """
     Return the progress fields a new game must clear.
 
-    FIX: COLLAB: Claude (agent mode) suggested extracting the New Game reset
+    FIX: Claude (agent mode) suggested extracting the New Game reset
     into this small pure function so the fix could be unit-tested; I reviewed it
     and wired it into app.py.
 

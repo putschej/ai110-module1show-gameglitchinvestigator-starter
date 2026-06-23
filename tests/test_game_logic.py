@@ -1,4 +1,4 @@
-from logic_utils import check_guess, reset_progress
+from logic_utils import check_guess, reset_progress, parse_guess
 
 def test_winning_guess():
     # If the secret is 50 and guess is 50, it should be a win
@@ -19,7 +19,7 @@ def test_guess_too_low():
     outcome, message = check_guess(40, 50)
     assert outcome == "Too Low"
 
-# FIX: COLLAB: the regression tests below were written with Claude in agent mode
+# FIX: the regression tests below were written with Claude in agent mode
 # — it proposed asserting on the hint message and the reset fields, then ran
 # pytest to confirm each fix; I reviewed the assertions for correctness.
 def test_too_high_message_says_go_lower():
@@ -55,3 +55,48 @@ def test_reset_progress_history_is_fresh_list():
     first = reset_progress()
     first["history"].append("stale")
     assert reset_progress()["history"] == []
+
+# CHALLENGE 1: edge-case input handling. These check that parse_guess (and
+# check_guess) handle unusual inputs gracefully instead of crashing.
+def test_negative_number_is_parsed():
+    # Edge case: a minus sign is valid int syntax, so a negative guess should
+    # parse cleanly rather than error out.
+    ok, value, err = parse_guess("-7")
+    assert ok is True
+    assert value == -7
+    assert err is None
+
+def test_decimal_is_truncated_to_int():
+    # Edge case: a player might type a decimal; parse_guess should coerce it to
+    # an int (truncating toward zero) instead of failing.
+    ok, value, err = parse_guess("3.7")
+    assert ok is True
+    assert value == 3
+    assert err is None
+
+def test_extremely_large_number_is_parsed():
+    # Edge case: Python ints are arbitrary precision, so a huge value should
+    # parse without overflowing or crashing.
+    big = "100000000000000000000"
+    ok, value, err = parse_guess(big)
+    assert ok is True
+    assert value == int(big)
+    assert err is None
+
+def test_large_guess_reads_as_too_high():
+    # A very large guess must still be classified correctly by check_guess.
+    outcome, _ = check_guess(10 ** 18, 50)
+    assert outcome == "Too High"
+
+def test_negative_guess_reads_as_too_low():
+    # A negative guess must still be classified correctly by check_guess.
+    outcome, _ = check_guess(-7, 50)
+    assert outcome == "Too Low"
+
+def test_non_numeric_input_is_rejected_gracefully():
+    # Edge case: garbage text should be rejected with a friendly message, not
+    # an unhandled exception.
+    ok, value, err = parse_guess("abc")
+    assert ok is False
+    assert value is None
+    assert err == "That is not a number."
