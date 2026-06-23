@@ -57,6 +57,7 @@ Yes. Claude pointed out that the original tests only checked the outcome label (
 ## 4. What did you learn about Streamlit and state?
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+Streamlit re-runs your entire script from top to bottom every time the user interacts with the app — clicking a button, typing in a field, or toggling a control all trigger a full rerun. Because of that, ordinary local variables don't persist; they get recreated on every rerun, which is why the secret number kept getting re-generated on each click. Session state (`st.session_state`) is the fix: it's a dictionary that persists across reruns, so values you store in it (the secret, score, attempts, history) survive instead of being reset. The New Game bug we fixed was a session state bug — it only reset some of the stored keys and left the old score and history in place.
 
 ---
 
@@ -64,5 +65,10 @@ Yes. Claude pointed out that the original tests only checked the outcome label (
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+I liked dropping `# BUG 1` and `# BUG 2` comments right in the code at the spots that were broken. It made it easy to find those places again later, and it gave me a quick way to point Claude straight at a specific line when we talked instead of re-describing the same bug over and over. I want to keep using little markers like that as a way to organize my own work and to communicate with AI.
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+Next time I'd modularize my fixes more from the start — break the changes into smaller, separate pieces instead of fixing things in one big chunk. On this project we ended up pulling functions out into `logic_utils.py` so they could be tested, and doing that kind of split earlier would have kept things cleaner and easier to test as I went.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+Honestly, this didn't change how I think about AI-generated code very much. I already assumed AI output needs to be checked, and this mostly confirmed it — a confident "production-ready" label doesn't mean the code actually works.

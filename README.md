@@ -25,21 +25,69 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] Describe the game's purpose.
+
+It's a number guessing game. The computer picks a secret number and you try to
+guess it, and it tells you if you're too high or too low until you get it. The
+difficulty setting changes two things: the range of numbers and how many guesses
+you get. I suppose this is fun to some people.
+
+- [x] Detail which bugs you found.
+
+A few things were off when I first played it:
+
+- The hints were backwards. If I guessed too high it told me to go higher, which
+  sends you the wrong way.
+- The "New Game" button didn't really start a new game. It kept the old score and
+  history, and if you had already won or lost it wouldn't let you play again.
+- The secret number kept changing type. On every other guess the code turned the
+  secret into text, so the comparison got weird and the hint was wrong.
+- The difficulty range didn't actually apply on a new game. It always picked from
+  1 to 100 no matter what I set.
+- The difficulty was kind of backwards too. "Normal" uses 1 to 100 with the most
+  guesses, but that's a wider range than "Hard" (1 to 50), so Normal is really
+  the hardest.
+
+- [x] Explain what fixes you applied.
+
+I picked two to actually fix:
+
+- **Backwards hints.** I moved `check_guess` out of `app.py` into `logic_utils.py`
+  and swapped the messages so a too-high guess now says "Go LOWER" and a too-low
+  guess says "Go HIGHER."
+- **New Game not resetting.** I added a `reset_progress()` function in
+  `logic_utils.py` and called it from the New Game button so the score, status,
+  and history all clear out. Now a finished game actually lets you start over.
+
+After each fix I ran `pytest` to make sure it worked. I fixed the old tests that
+were checking the wrong thing and added new tests for both bugs, and they all pass.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
+Here's a sample game from start to finish so you can follow along without running it.
+I left it on Normal difficulty, and the secret number was 63.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+1. I start a new game.
+2. The sidebar shows the range is 1 to 100.
+3. The sidebar shows I get 8 guesses.
+4. I open "Developer Debug Info" and see the secret is 63.
+5. I guess 40.
+6. The game says "Too Low."
+7. It tells me to go HIGHER.
+8. I guess 80.
+9. The game says "Too High."
+10. It tells me to go LOWER.
+11. I guess 60.
+12. The game says "Too Low," go HIGHER.
+13. The attempts-left counter ticks down by one.
+14. I guess 63.
+15. The game says "Correct!" and throws the balloons.
+16. It shows the secret was 63 and my final score.
+17. It locks the game so I can't keep guessing.
+18. I click New Game.
+19. The score, history, and status all reset.
+20. It picks a fresh secret number.
+21. It lets me play again instead of getting stuck on the "you already won" screen.
 
 ## 🧪 Test Results
 
